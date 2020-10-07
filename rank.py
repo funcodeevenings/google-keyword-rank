@@ -2,40 +2,36 @@ import requests
 from bs4 import BeautifulSoup
 from collections import OrderedDict
 
-keyword = "puma"
-website = 'www.amazon.in'
+keyword = "hello"
+website = 'hello.processing.org'
 
 
 print("keyword = ",keyword)
 print("website = ",website)
 
-payload = {'q': keyword}
-r = requests.get('https://www.google.com/search', params=payload)
 
-# print("url =",r.url)
-
-# print("response =",r.text)
-
-soup = BeautifulSoup(r.text, 'html.parser')
-divs = soup.find_all("div", class_="kCrYT")
-# print(soup.prettify())
-
-# print(soup.cite)
-
-lis = []
-for i,div in enumerate(divs):
-    # print("i =",i)
-    if div.a:
-        val = div.a['href']
-        x = val.split('/')
-        if len(x)>3:
-            lis.append(x[3])
+length=0
+for j in range(0,190,10):
+    lis = []
+    payload = {'q': keyword, 'start': j}
+    r = requests.get('https://www.google.com/search', params=payload)
 
 
-ans = list(OrderedDict.fromkeys(lis))
+    soup = BeautifulSoup(r.text, 'html.parser')
+    divs = soup.find_all("div", class_="kCrYT")
+    for i,div in enumerate(divs):
+        # print("i =",i)
+        if div.a:
+            val = div.a['href']
+            x = val.split('/')
+            if len(x)>3:
+                lis.append(x[3])
 
-# print(ans)
-
-
-rank = ans.index(website)
-print("=======RANK =========",rank+1)
+    try:
+        rank = lis.index(website)
+        if rank:
+            print("=======PAGE =========",j/10+1)
+            print("=======RANK =========",rank+length+1)
+            break;
+    except:
+        length = length+len(lis)
